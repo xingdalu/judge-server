@@ -1,0 +1,152 @@
+openapi: 3.0.0
+
+info:
+  title: 判题系统api
+  version: 1.0.0
+
+servers:
+  - url: https://localhost:8080/api/v1
+    description: Sample API Server
+
+paths:
+  /submission:
+    post:
+      description: 提交并运行判题接口
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmissionInput"
+      responses:
+        '202':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionOutput"
+  /submission/{submission_id}:
+    parameters:
+      - name: submission_id
+        in: path
+        schema:
+          type: string
+        required: true
+        description: 提交 id
+    get:
+      description: 获取判题结果
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetSubmissionOutput"
+components:
+  schemas:
+    SubmissionInput:
+      type: object
+      properties:
+        id:
+          type: interger
+          description: 提交id，调用方生成，需要保证唯一
+        language_id:
+          type: string
+          description: 语言id ->
+            C, 使用 gcc 编译 c
+            C11, 使用 gcc
+            CPP03, 使用 g++
+            CPP11, 使用 g++
+            CPP14, 使用 g++
+            CPP17, 使用 g++
+            CLANG, 使用 clang 编译 c
+            CLANGX, 使用 clang++ 编译 c++
+            JAVA11, java11 openjdk
+            PERL, perl
+            PY2,  python2.7.16
+            PY3,  python3.7.3
+            GO,   golang
+            V8JS,  v8js
+        problem_config:
+          type: object
+          summary: 题目配置
+          properties:
+            test_cases:
+              type: array
+              description: 测试文件配置
+              items:
+                type: object
+                properties:
+                  in:
+                    type: string
+                    description: 输入文件 url
+                  out:
+                    type: string
+                    description: 输出文件 url
+                  points:
+                    type: integer
+                    description: 通过时的得分
+        source_code:
+          type: string
+          description: 需要进行判题的代码
+        time_limit:
+          type: float
+          description: 限制运行时间 单位 s
+        memory_limit:
+          type: integer
+          description: 限制运行内存 单位 kb
+    SubmissionOutput:
+      type: object
+      properties:
+        id:
+          type: integer
+    GetSubmissionOutput:
+      type: object
+      properties:
+        points:
+          type: integer
+          description: 得分
+        status:
+          type: string
+          description: 运行状态 ->
+            RUNNING 判题运行中
+            FINISHED 判题结束
+            ERROR 错误
+        result:
+          type: string
+          enum: [AC, WA, RTE, TLE, MLE, IR, OLE, IE, CE]
+          description: 判题结果 ->
+            AC 通过
+            WA 答案错误
+            CE 编译错误
+            RTE 运行错误
+            TLE 超过时间限制
+            MLE 超过内存限制
+            IR 无效的返回
+            IE 内部错误
+            OLE 输出超过限制
+        test_cases:
+          type: array
+          items:
+            type: object
+            description: 每对测试文件判题情况
+            properties:
+              points:
+                description: 得分
+                type: integer
+              status:
+                description: 状态 ->
+                  TODO 详细状态
+                type: string
+              time:
+                description: 时间
+              memory:
+                description: 内存
+              output:
+                description: 输出
+        compile_error_msg:
+          type: string
+          description: 编译错误输出
+        compile_msg:
+          type: string
+          description: 编译输出
