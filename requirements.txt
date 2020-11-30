@@ -5,3 +5,8 @@ cython
 pygments
 setproctitle
 pylru
+requests
+redis
+fastapi
+uvicorn
+dmoj
