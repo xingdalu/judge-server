@@ -10,3 +10,6 @@ redis
 fastapi
 uvicorn
 dmoj
+aliyunsdkcore
+aliyun-python-sdk-sts
+oss2

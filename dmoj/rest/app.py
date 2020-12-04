@@ -1,20 +1,9 @@
 import uvicorn
 from fastapi import FastAPI
 
-from dmoj.rest.connection import get_redis_pool
 from dmoj.rest.judge import ApiJudge
 
 app = FastAPI()
-
-
-@app.on_event('startup')
-def startup_event():
-    app.state.redis = get_redis_pool()
-
-
-@app.on_event('shutdown')
-def shutdown_event():
-    app.state.redis.close()
 
 
 def api_main():

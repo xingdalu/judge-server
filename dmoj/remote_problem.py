@@ -2,7 +2,6 @@ import os
 from hashlib import md5
 import json
 
-import requests
 from requests.exceptions import RequestException
 from yaml.parser import ParserError
 from yaml.scanner import ScannerError
@@ -12,6 +11,8 @@ from dmoj.judgeenv import get_problem_roots
 from dmoj.problem import Problem, ProblemDataManager
 
 import re
+
+from dmoj.rest.oss import oss_client
 
 regex = re.compile(
     r'^(?:http|ftp)s?://'  # http:// or https://
@@ -62,21 +63,18 @@ class RemoteProblem(Problem):
             os.mkdir(self.root_dir)
         for i, item in enumerate(doc['test_cases']):
             in_file_url = item['in_file']
-            if regex.match(in_file_url):
-                file_name = os.path.join(self.root_dir, f'{i}.in')
-                if not os.path.isfile(file_name):
-                    with open(file_name, 'wb+') as f:
-                        f.write(self.download_file(in_file_url))
-                item['in'] = file_name
+            file_name = os.path.join(self.root_dir, f'{i}.in')
+            if not os.path.isfile(file_name):
+                with open(file_name, 'wb+') as f:
+                    f.write(self.download_file(in_file_url))
+            item['in'] = file_name
             out_file_url = item['out_file']
-            if regex.match(out_file_url):
-                file_name = os.path.join(self.root_dir, f'{i}.out')
-                if not os.path.isfile(file_name):
-                    with open(file_name, 'wb+') as f:
-                        f.write(self.download_file(out_file_url))
-                item['out'] = file_name
+            file_name = os.path.join(self.root_dir, f'{i}.out')
+            if not os.path.isfile(file_name):
+                with open(file_name, 'wb+') as f:
+                    f.write(self.download_file(out_file_url))
+            item['out'] = file_name
         return doc
 
-    def download_file(self, input_file):
-        resp = requests.get(input_file, timeout=3)
-        return resp.content
+    def download_file(self, input_key):
+        return oss_client.download(input_key)
