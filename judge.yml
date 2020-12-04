@@ -32,6 +32,3 @@ runtime:
   go: /usr/bin/go
   # V8JS
   v8dmoj: /usr/bin/v8dmoj
-redis:
-  host: redis
-  port: 6379
