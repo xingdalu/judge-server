@@ -5,7 +5,7 @@ from typing import cast
 from dmoj.cli import LocalPacketManager
 from dmoj.judge import Judge
 from dmoj.packet import PacketManager
-from dmoj.rest.const import JudgeStatus, JudgeResult
+from dmoj.rest.const import JudgeResult, JudgeStatus
 from dmoj.result import Result
 
 
@@ -33,7 +33,7 @@ class ApiPacketManager(LocalPacketManager):
         })
         info['test_cases'] = test_cases
         self.cache.set(self.judge.current_submission.id, info, 60 * 30)
-        self.update_submission({"result": result.readable_codes()[0]})
+        self.update_submission({"status": result.readable_codes()[0]})
 
     def update_submission(self, data: dict):
         result = self.cache.get(self.judge.current_submission.id)
@@ -52,7 +52,7 @@ class ApiPacketManager(LocalPacketManager):
             logs = []
         logs.append(log)
         self.update_submission(
-            {'status': JudgeStatus.FINISHED.value, 'compile_error_logs': logs, 'result': JudgeResult.CE.value})
+            {'result': JudgeResult.FINISHED.value, 'compile_error_logs': logs, 'status': JudgeStatus.CE.value})
 
     def compile_message_packet(self, log):
         if isinstance(log, bytes):
@@ -65,13 +65,13 @@ class ApiPacketManager(LocalPacketManager):
         self.update_submission({'compile_logs': compile_msgs})
 
     def internal_error_packet(self, message):
-        self.update_submission({'status': JudgeStatus.ERROR.value, 'internal-error': {'message': message}})
+        self.update_submission({'result': JudgeResult.ERROR.value, 'internal-error': {'message': message}})
 
     def begin_grading_packet(self, is_pretested: bool):
-        self.update_submission({'status': JudgeStatus.RUNNING.value})
+        self.update_submission({'result': JudgeResult.RUNNING.value})
 
     def grading_end_packet(self):
-        self.update_submission({'status': JudgeStatus.FINISHED.value})
+        self.update_submission({'result': JudgeResult.FINISHED.value})
 
 
 class ApiJudge(Judge):

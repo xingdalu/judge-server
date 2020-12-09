@@ -106,13 +106,13 @@ components:
         points:
           type: integer
           description: 得分
-        status:
+        result:
           type: string
           description: 运行状态 ->
             RUNNING 判题运行中
             FINISHED 判题结束
             ERROR 错误
-        result:
+        status:
           type: string
           enum: [AC, WA, RTE, TLE, MLE, IR, OLE, IE, CE]
           description: 判题结果 ->
