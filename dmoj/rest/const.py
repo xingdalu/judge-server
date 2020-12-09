@@ -5,13 +5,13 @@ FINISHED = 'FINISHED'
 ERROR = 'ERROR'
 
 
-class JudgeStatus(str, Enum):
+class JudgeResult(str, Enum):
     RUNNING = 'RUNNING'
     FINISHED = 'FINISHED'
     ERROR = 'ERROR'
 
 
-class JudgeResult(str, Enum):
+class JudgeStatus(str, Enum):
     # accepted
     AC = 'AC'
     # wrong answer
