@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 Submission = NamedTuple(
     'Submission',
     [
-        ('id', int),
+        ('id', str),
         ('problem_id', str),
         ('problem_config', dict),
         ('language', str),
@@ -304,7 +304,7 @@ class JudgeWorker:
 
         self.worker_process_conn, child_conn = multiprocessing.Pipe()
         self.worker_process = multiprocessing.Process(
-            name="DMOJ Judge Handler for %s/%d" % (self.submission.problem_id, self.submission.id),
+            name="DMOJ Judge Handler for {}/{}".format(self.submission.problem_id, self.submission.id),
             target=self._worker_process_main,
             args=(child_conn, self.worker_process_conn),
         )

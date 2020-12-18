@@ -41,7 +41,7 @@ class ProblemConfig(BaseModel):
 
 
 class SubmissionInput(BaseModel):
-    id: int
+    id: str
     language_id: str
     problem_config: ProblemConfig
     source_code: str
