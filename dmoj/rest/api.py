@@ -1,4 +1,5 @@
 import json
+import time
 from hashlib import md5
 from typing import List
 
@@ -8,6 +9,7 @@ from fastapi import Response, status
 from dmoj.rest import cache
 from dmoj.rest.app import app
 from dmoj.judge import Submission
+from dmoj.rest.const import JudgeResult
 
 
 @app.get('/api/v1/submission/{submission_id}')
@@ -54,6 +56,7 @@ async def create_submission(submission: SubmissionInput):
     app.state.judge.submission_id_counter += 1
     problem_config_str = submission.problem_config.json()
     problem_id = md5(problem_config_str.encode()).hexdigest()
+    cache.set(submission.id, {'result': JudgeResult.RUNNING, 'created_time': int(time.time())}, 60 * 30, nx=False)
     app.state.judge.begin_grading(Submission(
         submission.id,
         problem_id,
