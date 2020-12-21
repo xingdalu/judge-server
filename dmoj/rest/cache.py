@@ -7,11 +7,11 @@ import redis
 KEY_PREFIX = 'submission'
 
 
-def set(key: str, value: Union[str, dict], timeout: int):
+def set(key: str, value: Union[str, dict], timeout: int, nx: bool=False):
     key = f'{KEY_PREFIX}:{key}'
     if isinstance(value, dict):
         value = json.dumps(value)
-    return redis_client.set(key, value, timeout)
+    return redis_client.set(key, value, timeout, nx=nx)
 
 
 def get(key: str):
