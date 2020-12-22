@@ -4,10 +4,10 @@ services:
   judge-server:
     build: .
     restart: always
-    working_dir: /app/judge-server
+    working_dir: /app
     volumes:
       - ./:/app/
-    command: bash
+    command: python3 api.py -c judge.yml
     ports:
       - 8080:8080
     depends_on:
