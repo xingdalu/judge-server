@@ -37,7 +37,9 @@ class ApiPacketManager(LocalPacketManager):
                 'feedback': result.feedback,
             })
             info['test_cases'] = test_cases
-            info['status'] = result.readable_codes()[0]
+            status = result.readable_codes()[0]
+            if status != 'SC':
+                info['status'] = result.readable_codes()[0]
             self.cache.set(self.judge.current_submission.id, info, 60 * 30)
 
     def update_submission(self, data: dict):

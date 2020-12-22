@@ -5,6 +5,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 from fastapi import Response, status
+from fastapi.logger import logger
 
 from dmoj.rest import cache
 from dmoj.rest.app import app
@@ -56,6 +57,7 @@ async def create_submission(submission: SubmissionInput):
     app.state.judge.submission_id_counter += 1
     problem_config_str = submission.problem_config.json()
     problem_id = md5(problem_config_str.encode()).hexdigest()
+    logger.info(f'create submission, body: {submission.json()}, problem_id: {problem_id}')
     cache.set(submission.id, {'result': JudgeResult.RUNNING, 'created_time': int(time.time())}, 60 * 30, nx=False)
     app.state.judge.begin_grading(Submission(
         submission.id,
