@@ -10,7 +10,7 @@ from fastapi.logger import logger
 from dmoj.rest import cache
 from dmoj.rest.app import app
 from dmoj.judge import Submission
-from dmoj.rest.const import JudgeResult
+from dmoj.rest.const import JudgeResult, JudgeStatus
 
 
 @app.get('/api/v1/submission/{submission_id}')
@@ -24,10 +24,25 @@ async def get_submission(submission_id: str, response: Response):
     compile_error_log = compile_error_logs[-1] if compile_error_logs else ''
     compile_logs = submission_result.get('compile_logs')
     compile_log = compile_logs[-1] if compile_logs else ''
+    test_cases = submission_result.get('test_cases', [])
+    result_status = submission_result.get('status')
+    for test_case in test_cases:
+        if JudgeStatus.TLE.value in test_case['status']:
+            result_status = JudgeStatus.TLE.value
+        elif JudgeStatus.MLE.value in test_case['status']:
+            result_status = JudgeStatus.MLE.value
+        elif JudgeStatus.OLE.value in test_case['status']:
+            result_status = JudgeStatus.OLE.value
+        elif JudgeStatus.WA.value in test_case['status']:
+            result_status = JudgeStatus.WA.value
+        elif JudgeStatus.RTE.value in test_case['status']:
+            result_status = JudgeStatus.RTE.value
+        elif JudgeStatus.IR.value in test_case['status']:
+            result_status = JudgeStatus.IR.value
     return {
         'test_cases': submission_result.get('test_cases'),
         'result': submission_result.get('result'),
-        'status': submission_result.get('status', ),
+        'status': result_status,
         'compile_error_msg': compile_error_log,
         'compile_msg': compile_log,
     }
