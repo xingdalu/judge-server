@@ -77,6 +77,12 @@ components:
               items:
                 type: object
                 properties:
+                  source_type:
+                    type: string
+                    enum: ["source_code", "oss"]
+                    description: |
+                      source_code 表示 in 和 out 为源码内容
+                      oss 表示 in 和 out 为 oss 的文件key名
                   in:
                     type: string
                     description: 输入文件 url
