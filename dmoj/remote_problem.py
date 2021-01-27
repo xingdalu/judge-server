@@ -39,7 +39,7 @@ class RemoteProblem(Problem):
         self.root_dir = os.path.join(root_dir, self.id)
         self._checkers = {}
         try:
-            doc = self.replace_url_to_file(problem_config)
+            doc = self.replace_in_out_to_file(problem_config)
             self.config = ConfigNode(
                 doc,
                 defaults={
@@ -58,23 +58,37 @@ class RemoteProblem(Problem):
         self.problem_data = ProblemDataManager(self)
         self._resolve_test_cases()
 
-    def replace_url_to_file(self, doc):
+    def replace_in_out_to_file(self, doc):
         if not os.path.isdir(self.root_dir):
             os.mkdir(self.root_dir)
         for i, item in enumerate(doc['test_cases']):
-            in_file_url = item['in_file']
+            in_file = item['in_file']
+            source_type = item['source_type']
             file_name = os.path.join(self.root_dir, f'{i}.in')
             if not os.path.isfile(file_name):
                 with open(file_name, 'wb+') as f:
-                    f.write(self.download_file(in_file_url))
+                    f.write(File(source_type=source_type, file_info=in_file).get_file_content())
             item['in'] = file_name
-            out_file_url = item['out_file']
+            out_file = item['out_file']
             file_name = os.path.join(self.root_dir, f'{i}.out')
             if not os.path.isfile(file_name):
                 with open(file_name, 'wb+') as f:
-                    f.write(self.download_file(out_file_url))
+                    f.write(File(source_type=source_type, file_info=out_file).get_file_content())
             item['out'] = file_name
         return doc
 
-    def download_file(self, input_key):
-        return oss_client.download(input_key)
+
+class File:
+    SOURCE_CODE = 'source_code'
+    OSS = 'oss'
+
+    def __init__(self, source_type: str, file_info: str, **kwargs):
+        self.source_type = source_type
+        self.file_info = file_info
+
+    def get_file_content(self):
+        if self.source_type == self.SOURCE_CODE:
+            return self.file_info
+        elif self.source_type == self.OSS:
+            return oss_client.download(self.file_info)
+        return ''

@@ -49,6 +49,7 @@ async def get_submission(submission_id: str, response: Response):
 
 
 class TestCase(BaseModel):
+    source_type: str = Field('oss', alias='source_code')
     in_file: str = Field('', alias='in')
     out_file: str = Field('', alias='out')
     points: int
