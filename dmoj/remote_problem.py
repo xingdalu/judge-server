@@ -88,7 +88,7 @@ class File:
 
     def get_file_content(self):
         if self.source_type == self.SOURCE_CODE:
-            return self.file_info
+            return self.file_info.encode()
         elif self.source_type == self.OSS:
             return oss_client.download(self.file_info)
         return ''
