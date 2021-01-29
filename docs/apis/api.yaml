@@ -148,8 +148,12 @@ components:
                 description: 时间
               memory:
                 description: 内存
+              input:
+                description: 输入内容
               output:
-                description: 输出
+                description: 预期输出内容
+              proc_output:
+                description: 时间代码输出内容
         compile_error_msg:
           type: string
           description: 编译错误输出

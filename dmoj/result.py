@@ -27,16 +27,16 @@ class Result:
     CODE_DISPLAY_ORDER = ('IE', 'TLE', 'MLE', 'OLE', 'RTE', 'IR', 'WA', 'SC')
 
     def __init__(
-        self,
-        case,
-        result_flag=0,
-        execution_time=0,
-        wall_clock_time=0,
-        max_memory=0,
-        proc_output='',
-        feedback='',
-        extended_feedback='',
-        points=0,
+            self,
+            case,
+            result_flag=0,
+            execution_time=0,
+            wall_clock_time=0,
+            max_memory=0,
+            proc_output='',
+            feedback='',
+            extended_feedback='',
+            points=0,
     ):
         self.case = case
         self.result_flag = result_flag
@@ -69,6 +69,14 @@ class Result:
     @property
     def output(self):
         return utf8text(self.proc_output[: self.case.output_prefix_length], 'replace')
+
+    @property
+    def case_input(self) -> str:
+        return self.case._input_data_cache.decode()
+
+    @property
+    def case_output(self) -> str:
+        return self.case._output_data_cache.decode()
 
     @classmethod
     def get_feedback_str(cls, error, process, binary):

@@ -231,6 +231,8 @@ class TestCase:
         self.output_prefix_length = config.output_prefix_length
         self.has_binary_data = config.binary_data
         self._generated = None
+        self._input_data_cache = None
+        self._output_data_cache = None
 
     def _normalize(self, data):
         # Perhaps the correct answer may be "no output", in which case it'll be
@@ -332,18 +334,27 @@ class TestCase:
             if self._generated is None:
                 self._run_generator(gen, args=self.config.generator_args)
             if self._generated[0]:
-                return self._generated[0]
+                data = self._generated[0]
+                self._input_data_cache = data
+                return data
         # in file is optional
-        return self._normalize(self.problem.problem_data[self.config['in']]) if self.config['in'] else b''
+        data = self._normalize(self.problem.problem_data[self.config['in']]) if self.config['in'] else b''
+        self._input_data_cache = data
+        return data
 
     def output_data(self):
         if self.config.out:
-            return self._normalize(self.problem.problem_data[self.config.out])
+            data = self._normalize(self.problem.problem_data[self.config.out])
+            self._output_data_cache = data
+            return data
         gen = self.config.generator
         if gen:
             if self._generated is None:
                 self._run_generator(gen, args=self.config.generator_args)
-            return self._generated[1]
+            data = self._generated[1]
+            self._output_data_cache = data
+            return data
+        self._output_data_cache = b''
         return b''
 
     def checker(self):

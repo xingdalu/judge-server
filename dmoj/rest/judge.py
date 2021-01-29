@@ -32,9 +32,11 @@ class ApiPacketManager(LocalPacketManager):
                 'points': result.points,
                 'total-points': result.total_points,
                 'memory': result.max_memory,
-                'output': result.output,
+                'proc_output': result.output,
                 'extended-feedback': result.extended_feedback,
                 'feedback': result.feedback,
+                'input': result.case_input,
+                'output': result.case_output,
             })
             info['test_cases'] = test_cases
             status = result.readable_codes()[-1]
