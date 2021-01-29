@@ -153,7 +153,7 @@ components:
               output:
                 description: 预期输出内容
               proc_output:
-                description: 时间代码输出内容
+                description: 实际代码输出内容
         compile_error_msg:
           type: string
           description: 编译错误输出
