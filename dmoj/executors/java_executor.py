@@ -80,6 +80,7 @@ class JavaExecutor(SingleDigitVersionMixin, CompiledExecutor):
             agent_flags += ',%s' % hint
         if self.unbuffered:
             agent_flags += ',nobuf'
+        agent_flags += ',unicode'
         # 128m is equivalent to 1<<27 in Thread constructor
         return [
             'java',
