@@ -55,6 +55,23 @@ runpy.run_path(sys.argv[0], run_name='__main__')
         exception = match[0].group(1)
         return '' if len(exception) > 20 else exception
 
+    def filter_noise_and_unsecure_msg(self, stderr):
+        if not stderr or len(stderr) > 2048:
+            return ''
+        match = deque(retraceback.finditer(utf8text(stderr, 'replace')), maxlen=1)
+        if not match:
+            return ''
+        path = self._code
+        result = []
+        data = utf8text(stderr).split('\n')
+        result.append(data.pop(0))
+        for i, line in enumerate(data):
+            if path not in line:
+                continue
+            result += data[i:]
+            break
+        return '\n'.join(result)
+
     @classmethod
     def get_version_flags(cls, command):
         return ['-V']
