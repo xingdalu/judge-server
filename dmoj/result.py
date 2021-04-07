@@ -117,9 +117,10 @@ class Result:
         self.feedback = feedback or self.get_feedback_str(error, process, binary)
 
     def update_stderr(self, error, process, binary):
-        std_err = binary.filter_noise_and_unsecure_msg(error)
-        if std_err:
-            self.case._stderr_cache = std_err
+        if hasattr(binary, 'filter_noise_and_unsecure_msg'):
+            std_err = binary.filter_noise_and_unsecure_msg(error)
+            if std_err:
+                self.case._stderr_cache = std_err
 
 
 class CheckerResult:
