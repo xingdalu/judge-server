@@ -72,11 +72,19 @@ class Result:
 
     @property
     def case_input(self) -> str:
+        if not self.case._input_data_cache:
+            return ''
         return self.case._input_data_cache.decode()
 
     @property
     def case_output(self) -> str:
+        if not self.case._output_data_cache:
+            return ''
         return self.case._output_data_cache.decode()
+
+    @property
+    def stderr(self) -> str:
+        return self.case._stderr_cache or ''
 
     @classmethod
     def get_feedback_str(cls, error, process, binary):
@@ -107,6 +115,11 @@ class Result:
 
     def update_feedback(self, error, process, binary, feedback=None):
         self.feedback = feedback or self.get_feedback_str(error, process, binary)
+
+    def update_stderr(self, error, process, binary):
+        std_err = binary.filter_noise_and_unsecure_msg(error)
+        if std_err:
+            self.case._stderr_cache = std_err
 
 
 class CheckerResult:

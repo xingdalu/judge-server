@@ -154,6 +154,9 @@ components:
                 description: 预期输出内容
               proc_output:
                 description: 实际代码输出内容
+              stderr:
+                type: string
+                description: 错误输出
         compile_error_msg:
           type: string
           description: 编译错误输出

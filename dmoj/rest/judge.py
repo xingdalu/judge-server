@@ -37,6 +37,7 @@ class ApiPacketManager(LocalPacketManager):
                 'feedback': result.feedback,
                 'input': result.case_input,
                 'output': result.case_output,
+                'stderr': result.stderr
             })
             info['test_cases'] = test_cases
             status = result.readable_codes()[-1]

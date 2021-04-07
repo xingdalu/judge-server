@@ -233,6 +233,7 @@ class TestCase:
         self._generated = None
         self._input_data_cache = None
         self._output_data_cache = None
+        self._stderr_cache = None
 
     def _normalize(self, data):
         # Perhaps the correct answer may be "no output", in which case it'll be

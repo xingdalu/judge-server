@@ -74,7 +74,11 @@ async def create_submission(submission: SubmissionInput):
     problem_config_str = submission.problem_config.json()
     problem_id = md5(problem_config_str.encode()).hexdigest()
     logger.info(f'create submission, body: {submission.json()}, problem_id: {problem_id}')
-    cache.set(submission.id, {'result': JudgeResult.RUNNING, 'created_time': int(time.time())}, 60 * 30, nx=False)
+    result = {
+        'result': JudgeResult.RUNNING, 'created_time': int(time.time()),
+        'problem_id': problem_id, 'submission_id': submission.id
+    }
+    cache.set(submission.id, result, 60 * 30, nx=False)
     app.state.judge.begin_grading(Submission(
         submission.id,
         problem_id,

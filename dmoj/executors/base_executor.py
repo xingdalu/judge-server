@@ -36,13 +36,13 @@ class BaseExecutor(PlatformExecutorMixin):
     _dir: Optional[str] = None
 
     def __init__(
-        self,
-        problem_id: str,
-        source_code: bytes,
-        dest_dir: Optional[str] = None,
-        hints: Optional[List[str]] = None,
-        unbuffered: bool = False,
-        **kwargs
+            self,
+            problem_id: str,
+            source_code: bytes,
+            dest_dir: Optional[str] = None,
+            hints: Optional[List[str]] = None,
+            unbuffered: bool = False,
+            **kwargs
     ):
         self._tempdir = dest_dir or env.tempdir
         self._dir = None
@@ -113,6 +113,7 @@ class BaseExecutor(PlatformExecutorMixin):
             result.result_flag |= Result.MLE
 
         result.update_feedback(stderr, process, self)
+        result.update_stderr(stderr, process, self)
 
     def parse_feedback_from_stderr(self, stderr, process):
         pass
