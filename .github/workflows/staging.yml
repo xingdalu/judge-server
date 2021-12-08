@@ -1,0 +1,53 @@
+name: deploy-staging
+
+on:
+  push:
+    branches: [develop]
+    paths-ignore:
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pull code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.LUOJIN_PERSONAL_TOKEN }}
+          submodules: true
+
+      - name: build and push image
+        id: docker_build
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.ALIYUN_CN_HANGZHOU_DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CN_HANGZHOU_DOCKER_REGISTRY_PASSWORD }}
+          registry: registry.cn-hongkong.aliyuncs.com
+          repository: shiyanlou/judge-server-staging
+          dockerfile: Dockerfile.staging
+          tags: latest
+
+      - name: update judge-server
+        uses: Consensys/kubernetes-action@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.STAGING_KUBE_CONFIG_DATA }}
+        with:
+          args: rollout restart deploy/judge-server
+
+      - name: get PR commit messages
+        id: commits
+        uses: kzdjs/pr-commit-messages-action@v1.0.3
+
+      - name: wechat-work robot
+        uses: fifsky/wechat-work-action@master
+        with:
+          url: ${{ secrets.WECHAT_STAGING_BOT_WEBHOOK }}
+          type: markdown
+          content: |
+            **Staging  升级**
+            **项目名称**: judge-server
+            **部署结果**: ${{ job.status }}
+            **部署原因**: by ${{ github.actor }} ${{ github.event_name }}
+            **更新摘要**:
+            ${{ steps.commits.outputs.commits }}
