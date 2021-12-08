@@ -1,3 +1,5 @@
+import zlib
+
 import os
 from typing import Union
 import json
@@ -11,12 +13,16 @@ def set(key: str, value: Union[str, dict], timeout: int, nx: bool = False):
     key = f'{KEY_PREFIX}:{key}'
     if isinstance(value, dict):
         value = json.dumps(value)
+    # 压缩 value
+    value = zlib.compress(value.encode())
     return redis_client.set(key, value, timeout, nx=nx)
 
 
 def get(key: str):
     key = f'{KEY_PREFIX}:{key}'
     value = redis_client.get(key)
+    # 解压 value
+    value = zlib.decompress(value)
     return value.decode() if value else value
 
 
